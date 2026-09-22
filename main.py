@@ -216,3 +216,69 @@ st.info(
     f"대부분의 영화는 총 관객 약 {range_start:,}명~{range_end:,}명 구간에 몰려 있으며, "
     f"가장 관객이 많은 영화는 「{max_movie}」로 총 {max_audience:,.0f}명의 관객을 기록했습니다."
 )
+
+# =========================================================
+# 4. 개봉일 스크린 수와 총 관객의 관계
+# =========================================================
+
+st.header("4. 개봉일 스크린 수와 총 관객의 관계")
+
+# 숫자형으로 변환
+df["first_scrn"] = pd.to_numeric(
+    df["first_scrn"],
+    errors="coerce"
+)
+
+# 필요한 데이터가 있는 영화만 사용
+scatter_df = df.dropna(
+    subset=["first_scrn", "total_audi", "movieNm", "genre_first"]
+)
+
+fig4 = px.scatter(
+    scatter_df,
+    x="first_scrn",
+    y="total_audi",
+    color="genre_first",
+    hover_name="movieNm",
+    title="개봉일 스크린 수와 총 관객의 관계",
+    labels={
+        "first_scrn": "개봉일 스크린 수",
+        "total_audi": "총 관객 수",
+        "genre_first": "장르"
+    }
+)
+
+fig4.update_traces(
+    hovertemplate=(
+        "<b>%{hovertext}</b><br>"
+        "개봉일 스크린 수: %{x:,.0f}개<br>"
+        "총 관객: %{y:,.0f}명"
+        "<extra></extra>"
+    ),
+    marker=dict(
+        size=9,
+        opacity=0.75
+    )
+)
+
+fig4.update_layout(
+    height=650,
+    xaxis_title="개봉일 스크린 수",
+    yaxis_title="총 관객 수",
+    margin=dict(t=70, b=60, l=60, r=30)
+)
+
+st.plotly_chart(fig4, use_container_width=True)
+
+
+# -----------------------------
+# 그래프 4 설명 구역
+# -----------------------------
+
+st.markdown("---")
+
+st.subheader("이 그래프로 알 수 있는 것")
+
+st.info(
+    "개봉일 스크린 수와 총 관객 수가 어떤 관계를 보이는지 영화들의 분포를 통해 확인할 수 있습니다."
+)
